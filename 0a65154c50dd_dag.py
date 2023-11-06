@@ -3,7 +3,7 @@ from airflow.providers.databricks.operators.databricks import DatabricksSubmitRu
 from datetime import datetime, timedelta 
 
 notebook_task = {
-    'notebook_path': '/Users/joshualexbell@gmail.com/databricks_data_cleaning_and_sql_quries_notebook',
+    'notebook_path': '/Users/joshualexbell@gmail.com/databricks_data_cleaning_and_sql_queries_notebookg',
 }
 
 notebook_params = {
@@ -30,7 +30,7 @@ with DAG('0a65154c50dd_dag',
     opr_submit_run = DatabricksSubmitRunOperator(
         task_id='submit_run',
         databricks_conn_id='databricks_default',
-        existing_cluster_id='pinterest-msk-cluster',
+        existing_cluster_id='1108-162752-8okw8dgg',
         notebook_task=notebook_task
     )
     opr_submit_run
