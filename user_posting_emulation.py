@@ -88,6 +88,7 @@ def run_infinite_post_data_loop():
             print(f"Status code for pin results: {res1.status_code}")
             print(f"Status code for geo results: {res2.status_code}")
             print(f"Status code for user results: {res3.status_code}")
+            
            
 
 
