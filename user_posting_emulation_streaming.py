@@ -67,7 +67,7 @@ def run_infinite_stream_data_loop():
                 "StreamName": "streaming-0a65154c50dd-geo",
                 "Data": 
                     {
-                      "index" : str(geo_result["ind"]), "timestamp" : str(geo_result["timestamp"]), "latitude" : str(geo_result["latitude"]), "longitude" : str(geo_result["longitude"]), "country" : geo_result["country"]
+                      "ind" : str(geo_result["ind"]), "timestamp" : str(geo_result["timestamp"]), "latitude" : str(geo_result["latitude"]), "longitude" : str(geo_result["longitude"]), "country" : geo_result["country"]
                     },
                 "PartitionKey": "partition-2"
             })
@@ -82,7 +82,7 @@ def run_infinite_stream_data_loop():
             userload = json.dumps({
                 "StreamName": "streaming-0a65154c50dd-geo",
                 "Data": {
-                "index" : str(user_result["ind"]), "first_name" : user_result["first_name"], "last_name" : user_result["last_name"], "age" : str(user_result["age"]), "date_joined" : str(user_result["date_joined"])
+                "ind" : str(user_result["ind"]), "first_name" : user_result["first_name"], "last_name" : user_result["last_name"], "age" : str(user_result["age"]), "date_joined" : str(user_result["date_joined"])
                 },
                 "PartitionKey": "partition-3"
             })
