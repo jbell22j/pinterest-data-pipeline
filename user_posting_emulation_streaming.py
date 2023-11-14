@@ -80,7 +80,7 @@ def run_infinite_stream_data_loop():
                 user_result = dict(row._mapping)
             headers = {'Content-Type': 'application/json'}
             userload = json.dumps({
-                "StreamName": "streaming-0a65154c50dd-geo",
+                "StreamName": "streaming-0a65154c50dd-user",
                 "Data": {
                 "ind" : str(user_result["ind"]), "first_name" : user_result["first_name"], "last_name" : user_result["last_name"], "age" : str(user_result["age"]), "date_joined" : str(user_result["date_joined"])
                 },
