@@ -1,8 +1,6 @@
 import requests
 from time import sleep
 import random
-from multiprocessing import Process
-import boto3
 import json
 import sqlalchemy
 from sqlalchemy import text
@@ -15,6 +13,13 @@ random.seed(100)
 
 
 class AWSDBConnector:
+
+    '''
+    This class is used to create a functional AWS database connector.
+
+    Attributes:
+        N/A
+    '''
 
     def __init__(self):
 
@@ -32,6 +37,12 @@ class AWSDBConnector:
 new_connector = AWSDBConnector()
 
 def run_infinite_post_data_loop():
+    '''
+    This function is send an infinite loop of data to API gateway.
+
+    Parameters:
+    N/A
+    '''
     while True:
         sleep(random.randrange(0, 2))
         random_row = random.randint(0, 11000)
