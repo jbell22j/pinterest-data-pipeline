@@ -18,8 +18,8 @@ To simulate the data typically handled by Pinterest's engineers, the project inc
 
 When the script is run, it initializes a database connector class responsible for establishing a connection to an AWS RDS database. This database comprises the following tables:
 
-* pinterest_data contains data related to content being uploaded to Pinterest
-* geolocation_data contains data related to the geolocation of each Pinterest post in pinterest_data
-* user_data contains data related to the user whom each post in pinterest_data has been posted by
+* `pinterest_data` contains data related to content being uploaded to Pinterest
+* `geolocation_data` contains data related to the geolocation of each Pinterest post in `pinterest_data`
+* `user_data contains` data related to the user whom each post in `pinterest_data` has been posted by
 
-The run_infinite_post_data_loop() method continuously cycles at random intervals ranging from 0 to 2 seconds. During each iteration, it randomly selects all columns from a row in each of the three tables, compiling the data into a dictionary. Subsequently, these three dictionaries are printed to the console.
+The `run_infinite_post_data_loop()` method continuously cycles at random intervals ranging from 0 to 2 seconds. During each iteration, it randomly selects all columns from a row in each of the three tables, compiling the data into a dictionary. Subsequently, these three dictionaries are printed to the console.
