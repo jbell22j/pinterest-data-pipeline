@@ -6,6 +6,7 @@
 - [Project Dependencies](#dep)
 - [Project Data](#data)
 - [Tools Utilized](#tools)
+- [Building the Pipeline](#build)
 
  <a id="brief"></a>
 ## Project Brief 
@@ -56,6 +57,7 @@ The `run_infinite_post_data_loop()` method continuously cycles at random interva
 > The Confluent REST Proxy provides a RESTful interface to an Apache Kafka® cluster, making it easy to produce and consume messages, view the state of the cluster, and perform administrative actions without using the native Kafka protocol or clients.
 * [Managed Workflows for Apache Airflow](https://docs.aws.amazon.com/mwaa/latest/userguide/what-is-mwaa.html) - With Apache Airflow, users can employ Python to construct scheduling workflows for batch-oriented processes. In this project, MWAA is leveraged to orchestrate batch processing on the Databricks platform.
 
+ <a id="build"></a>
 ## Building the Pipeline
 
 ### Create an Apache cluster using AWS MSK
@@ -102,6 +104,8 @@ In order for the client machine to connect to the cluster, we need to edit the i
 3. Navigate to the 'Inbound rules' tab, then click 'Edit inbound rules.'
 4. Add a rule by selecting 'All traffic' for the type, and choose the security group linked to the EC2 instance.#
 5. Save the rules.
+
+We also need to create an IAM role for the client machine.
 
 1. Go to the AWS IAM dashboard, choose 'Roles' from the left menu, and click 'Create role.'
 2. Select 'AWS service' and 'EC2,' then proceed to the next step.
