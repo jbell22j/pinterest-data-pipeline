@@ -156,3 +156,100 @@ We also need to create an IAM role for the client machine.
     ]
 }
 ```
+
+5. On the subsequent page, provide a descriptive name for the policy and save it.
+6. Return to the create role tab in the browser, refresh to display the new policy, and select it.
+7. Proceed to the next step, give the role a descriptive name, and save the role.
+8. In the EC2 dashboard, access the client instance.
+9. Under 'Actions' and 'Security,' choose 'Modify IAM role.'
+10. Pick the recently created role and click 'Update IAM role.'
+
+### Install Kafka on the client machine
+
+After the new instance is in the running state, establish an SSH connection to interact with the instance via the command line. To achieve this, click on the instance ID to open the summary page, then select 'Connect':
+
+<img width="494" alt="connect-to-ec2" src="https://github.com/jbell22j/pinterest-data-pipeline/assets/141024595/5505cb0e-330c-4f27-a9d8-652a8e203c5c">
+
+Follow the instructions in the 'SSH' tab to connect to the instance.
+
+```
+
+# make sure key is not publicly viewable
+chmod 400 pinterest-kafka-client-keypair.pem
+# connect
+ssh -i "pinterest-kafka-client-keypair.pem" ec2-user@<instance-public-DNS>
+
+```
+
+Now on the instance command line:
+
+```
+
+# install Java - required for Kafka to run
+sudo yum install java-1.8.0
+# download Kafka - must be same version as MSK cluster created earlier
+wget https://archive.apache.org/dist/kafka/2.8.1/kafka_2.12-2.8.1.tgz
+# unpack .tgz
+tar -xzf kafka_2.12-2.8.1.tgz
+
+```
+
+Install the MSK IAM package that will enable the MSK cluster to authenticate the client:
+
+```
+
+# navigate to the correct directory
+cd kafka_2.12-2.8.1/libs/
+# download the package
+wget https://github.com/aws/aws-msk-iam-auth/releases/download/v1.1.5/aws-msk-iam-auth-1.1.5-all.jar
+
+```
+
+Configure the client to be able to use the IAM package:
+
+```
+
+# open bash config file
+nano ~/.bashrc
+
+```
+
+Add the following line to the config file, then save and exit:
+
+```
+
+export CLASSPATH=/home/ec2-user/kafka_2.12-2.8.1/libs/aws-msk-iam-auth-1.1.5-all.jar
+
+```
+
+Continue with configuration:
+
+```
+
+# activate changes to .bashrc
+source ~/.bashrc
+# navigate to Kafka bin folder
+cd ../bin
+# create client.properties file
+nano client.properties
+
+```
+
+Add the following code to the client.properties file, then save and exit:
+
+```
+
+# Sets up TLS for encryption and SASL for authN.
+security.protocol = SASL_SSL
+
+# Identifies the SASL mechanism to use.
+sasl.mechanism = AWS_MSK_IAM
+
+# Binds SASL client implementation.
+sasl.jaas.config = software.amazon.msk.auth.iam.IAMLoginModule required;
+
+# Encapsulates constructing a SigV4 signature based on extracted credentials.
+# The SASL client bound by "sasl.jaas.config" invokes this class.
+sasl.client.callback.handler.class = software.amazon.msk.auth.iam.IAMClientCallbackHandler
+
+```
