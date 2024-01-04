@@ -32,8 +32,12 @@ The `run_infinite_post_data_loop()` method continuously cycles at random interva
 ## Tools Used
 
 * [Apache Kafka](https://kafka.apache.org/) - Apache Kafka is an open-source distributed event streaming platform. From the Kafka [documentation](https://kafka.apache.org/documentation/):
-> Kafka combines three key capabilities so you can implement your use cases for event streaming end-to-end with a single battle-tested solution:
-To publish (write) and subscribe to (read) streams of events, including continuous import/export of your data from other systems.
-To store streams of events durably and reliably for as long as you want.
-To process streams of events as they occur or retrospectively.
+> Event streaming is the practice of capturing data in real-time from event sources like databases, sensors, mobile devices, cloud services, and software applications in the form of streams of events; storing these event streams durably for later retrieval; manipulating, processing, and reacting to the event streams in real-time as well as retrospectively; and routing the event streams to different destination technologies as needed. Kafka combines three key capabilities so you can implement your use cases for event streaming end-to-end with a single battle-tested solution. Kafka is a distributed system consisting of servers and clients that communicate via a high-performance TCP network protocol.
+* [Apache Spark](https://spark.apache.org/docs/3.4.1/) - Apache Spark™ is a multi-language engine for executing data engineering, data science, and machine learning on single-node machines or clusters.
+* [AWS API Gateway](https://aws.amazon.com/api-gateway/) - Amazon API Gateway, an AWS service, facilitates the creation, publishing, maintenance, monitoring, and securing of REST, HTTP, and WebSocket APIs at any scale. API developers can design APIs that interact with AWS or other web services, along with data stored in the AWS Cloud.
+* [AWS Kinesis](https://aws.amazon.com/kinesis/) - AWS Kinesis is a managed service designed for the processing and analysis of streaming data. In this project, I've employed Kinesis Data Streams to gather and temporarily store data before utilizing Spark on Databricks to read and process the stream.
+* [AWS MSK](https://aws.amazon.com/msk/) - Amazon Managed Streaming for Apache Kafka (MSK) enables secure data streaming through a fully managed and highly available Apache Kafka service. For further details, refer to the [developer guide](https://docs.aws.amazon.com/msk/latest/developerguide/what-is-msk.html).
+* [AWS MSK Connect](https://docs.aws.amazon.com/msk/latest/developerguide/msk-connect.html) - AWS MSK Connect simplifies the process for developers to stream data to and from their Apache Kafka clusters.
+* [Databricks](https://docs.databricks.com/en/index.html) - In this project, the Databricks platform is utilized for Spark processing of both batch and streaming data. From the [documentation](https://docs.databricks.com/en/introduction/index.html):
+> Databricks is a unified, open analytics platform for building, deploying, sharing, and maintaining enterprise-grade data, analytics, and AI solutions at scale. The Databricks Data Intelligence Platform integrates with cloud storage and security in your cloud account, and manages and deploys cloud infrastructure on your behalf.
   
