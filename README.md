@@ -253,3 +253,79 @@ sasl.jaas.config = software.amazon.msk.auth.iam.IAMLoginModule required;
 sasl.client.callback.handler.class = software.amazon.msk.auth.iam.IAMClientCallbackHandler
 
 ```
+
+### Create topics on the Kafka cluster
+
+You can now generate topics on the Kafka cluster through the command line on the client machine. Employ the following command to create topics, utilizing the bootstrap server string documented earlier after the cluster creation.
+
+```
+<path-to-your-kafka-installation>/bin/kafka-topics.sh --create --bootstrap-server <BootstrapServerString> --command-config client.properties --topic <topic name>
+
+```
+
+In this project, I established three topics: one for `pinterest_data`, another for `geolocation_data`, and the last one for `user_data` as described earlier.
+
+### Delivering messages to the Kafka cluster
+
+With the cluster operational and the client configured to access and create topics, you can now employ the client to establish producers for streaming messages to the cluster and consumers for retrieving those messages. I utilized the Confluent package to establish a REST API on the client. This API listens for requests and interacts with the Kafka cluster accordingly.
+
+To do this, first download the Confluent package to the client from the client's command line:
+
+```
+
+# download package
+sudo wget https://packages.confluent.io/archive/7.2/confluent-7.2.0.tar.gz
+# unpack .tar
+tar -xvzf confluent-7.2.0.tar.gz
+
+```
+
+Modifying the kafka-rest.properties file next:
+
+```
+
+# navigate to the correct directory
+cd cd confluent-7.2.0/etc/kafka-rest/
+nano nano kafka-rest.properties
+
+```
+
+Update the `bootstrap.servers` and `zookeeper.connect` variables with the values obtained from the MSK cluster information. Integrate the following lines to enable authentication:
+
+```
+
+# Sets up TLS for encryption and SASL for authN.
+client.security.protocol = SASL_SSL
+
+# Identifies the SASL mechanism to use.
+client.sasl.mechanism = AWS_MSK_IAM
+
+# Binds SASL client implementation.
+client.sasl.jaas.config = software.amazon.msk.auth.iam.IAMLoginModule required;
+
+# Encapsulates constructing a SigV4 signature based on extracted credentials.
+# The SASL client bound by "sasl.jaas.config" invokes this class.
+client.sasl.client.callback.handler.class = software.amazon.msk.auth.iam.IAMClientCallbackHandler
+
+```
+
+The inbound rules for the client security group also need to be modified to allow incoming HTTP requests on port 8082. On the AWS 'Security groups' page, choose the security group attached to the client, and add the following inbound rule:
+
+<img width="1820" alt="client-http-inbound-rules" src="https://github.com/jbell22j/pinterest-data-pipeline/assets/141024595/92ec621f-3e10-4436-87e5-799187c21955">
+
+To initiate the REST API, go to the confluent-7.2.0/bin directory and execute the following command:
+
+```
+
+./kafka-rest-start /home/ec2-user/confluent-7.2.0/etc/kafka-rest/kafka-rest.properties
+
+```
+
+Verify the API's request reception by opening a web browser and visiting "http://your-client-public-dns:8082/topics." The response should appear in the browser window and resemble something like:
+
+```
+
+["data.pin","data.geo","data.user"]
+
+```
+
