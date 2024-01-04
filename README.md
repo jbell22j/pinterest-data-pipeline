@@ -486,7 +486,7 @@ After the completion of the connector creation process, you should observe any m
 
 ## Batch processing data using Apache Spark on Databricks
 
-To facilitate batch processing of data on Databricks, it's crucial to establish a mount for the S3 bucket on the platform. The notebook `mount_s3_and_get_data.ipynb`, executed on the Databricks platform, encompasses the following steps:
+To facilitate batch processing of data on Databricks, it's crucial to establish a mount for the S3 bucket on the platform. The notebook `mount_s3_bucket.ipynb`, executed on the Databricks platform, encompasses the following steps:
 
 1. Import necessary libraries
 2. List tables in Databricks filestore in order to obtain AWS credentials file name
@@ -496,6 +496,111 @@ To facilitate batch processing of data on Databricks, it's crucial to establish 
 6. List the topics
 7. Read the .json message files into three Spark dataframes, one each for each of the topics
 8. Unmount the S3 bucket
+
+### Clean and query data using Apache Spark on Databricks
+
+The file databricks_data_cleaning_and_sql_notebook.ipynb contains the code for performing the necessary cleaning of the dataframes created using the steps above and the querying and returning specific insights about the data of the subsequent clean dataframes.
+
+### Orchestrating automated workflow of notebook on Databricks
+
+MWAA was employed to automate the execution of batch processing on Databricks. The Python code file `0a65154c50dd_dag.py` constitutes a Directed Acyclic Graph (DAG) orchestrating the execution of the aforementioned batch processing notebook. Uploaded to the MWAA environment, Airflow within MWAA is utilized to establish connections and execute the Databricks notebook at scheduled intervals, specified here as `@daily`.
+
+## Processing streaming data
+
+### Create data streams on Kinesis
+
+Initiating the processing of streaming data involved the creation of three streams on AWS Kinesis, each dedicated to a distinct data source.
+
+1. From the Kinesis dashboard, select 'Create data stream'.
+2. Give the stream a name, and select 'Provisioned' capacity mode.
+3. Click on 'Create data stream' to complete the process.
+
+### Create API proxy for uploading data to streams
+
+Interacting with the recently added Kinesis streams through HTTP requests is achievable. To enable this, I established new API resources on AWS API Gateway.
+
+For the DELETE method, the configured settings were:
+* 'Integration Type': 'AWS Service'
+* 'AWS Region': 'us-east-1'
+* 'AWS Service': 'Kinesis'
+* 'HTTP method': 'POST'
+* 'Action': 'DeleteStream'
+* 'Execution role': 'ARN of the created IAM role'
+
+In 'Integration Request' under 'HTTP Headers', add a new header:
+
+'Name': 'Content-Type'
+'Mapped from': 'application/x-amz-json-1.1'
+Under 'Mapping Templates', add new mapping template:
+
+'Content Type': 'application/json'
+Use the following code in the template:
+```
+{
+    "StreamName": "$input.params('stream-name')"
+}
+```
+
+<img width="1210" alt="delete-method-settings-2" src="https://github.com/jbell22j/pinterest-data-pipeline/assets/141024595/3994e3c9-4388-4941-822d-bea76435cbc9">
+
+For the other methods, the same settings were used except for:
+
+* GET
+'Action': 'DescribeStream'
+'Mapping Template':
+```
+{
+    "StreamName": "$input.params('stream-name')"
+}
+```
+* POST
+  'Action': 'CreateStream'
+  'Mapping Template':
+```
+{
+    "ShardCount": #if($input.path('$.ShardCount') == '') 5 #else $input.path('$.ShardCount') #end,
+    "StreamName": "$input.params('stream-name')"
+}
+```
+/record
+
+*PUT
+'Action': 'PutRecord'
+'Mapping Template':
+```
+{
+    "StreamName": "$input.params('stream-name')",
+    "Data": "$util.base64Encode($input.json('$.Data'))",
+    "PartitionKey": "$input.path('$.PartitionKey')"
+}
+```
+/records
+
+* PUT
+'Action': 'PutRecords'
+'Mapping Template':
+```
+{
+    "StreamName": "$input.params('stream-name')",
+    "Records": [
+       #foreach($elem in $input.path('$.records'))
+          {
+            "Data": "$util.base64Encode($elem.data)",
+            "PartitionKey": "$elem.partition-key"
+          }#if($foreach.hasNext),#end
+        #end
+    ]
+}
+```
+After creating the new resources and methods, the API must be redeployed.
+
+### Sending data to the Kinesis streams
+
+Executing the script `user_posting_emulation_streaming.py` initiates an infinite loop. Similar to the examples mentioned earlier, it fetches records from the RDS database and transmits them through the new API to Kinesis.
+
+### Processing the streaming data in Databricks
+
+The Jupyter notebook `data_streaming_and_cleaning_from_kinesis.ipynb` encompasses all the essential code for fetching the streams from Kinesis, refining (cleaning) the data, and subsequently loading the data into Delta tables on the Databricks cluster.
 
 
 
