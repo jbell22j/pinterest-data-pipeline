@@ -87,4 +87,4 @@ A client is needed to communicate with our configured cluster. In this project, 
 
 
 
-<img width="470" alt="image" src="https://github.com/jbell22j/pinterest-data-pipeline/assets/141024595/5483ae4b-a439-401f-bf7d-955a67e74404">
+<img width="400" alt="image" src="https://github.com/jbell22j/pinterest-data-pipeline/assets/141024595/5483ae4b-a439-401f-bf7d-955a67e74404">
