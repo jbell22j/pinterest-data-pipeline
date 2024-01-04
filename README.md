@@ -32,7 +32,7 @@ The `run_infinite_post_data_loop()` method continuously cycles at random interva
 ## Tools Used
 
 * [Apache Kafka](https://kafka.apache.org/) - Apache Kafka is an open-source distributed event streaming platform. From the Kafka [documentation](https://kafka.apache.org/documentation/):
-Kafka combines three key capabilities so you can implement your use cases for event streaming end-to-end with a single battle-tested solution:
+> Kafka combines three key capabilities so you can implement your use cases for event streaming end-to-end with a single battle-tested solution:
 To publish (write) and subscribe to (read) streams of events, including continuous import/export of your data from other systems.
 To store streams of events durably and reliably for as long as you want.
 To process streams of events as they occur or retrospectively.
