@@ -173,72 +173,59 @@ After the new instance is in the running state, establish an SSH connection to i
 Follow the instructions in the 'SSH' tab to connect to the instance.
 
 ```
-
 # make sure key is not publicly viewable
 chmod 400 pinterest-kafka-client-keypair.pem
 # connect
 ssh -i "pinterest-kafka-client-keypair.pem" ec2-user@<instance-public-DNS>
-
 ```
 
 Now on the instance command line:
 
 ```
-
 # install Java - required for Kafka to run
 sudo yum install java-1.8.0
 # download Kafka - must be same version as MSK cluster created earlier
 wget https://archive.apache.org/dist/kafka/2.8.1/kafka_2.12-2.8.1.tgz
 # unpack .tgz
 tar -xzf kafka_2.12-2.8.1.tgz
-
 ```
 
 Install the MSK IAM package that will enable the MSK cluster to authenticate the client:
 
 ```
-
 # navigate to the correct directory
 cd kafka_2.12-2.8.1/libs/
 # download the package
 wget https://github.com/aws/aws-msk-iam-auth/releases/download/v1.1.5/aws-msk-iam-auth-1.1.5-all.jar
-
 ```
 
 Configure the client to be able to use the IAM package:
 
 ```
-
 # open bash config file
 nano ~/.bashrc
-
 ```
 
 Add the following line to the config file, then save and exit:
 
 ```
-
 export CLASSPATH=/home/ec2-user/kafka_2.12-2.8.1/libs/aws-msk-iam-auth-1.1.5-all.jar
-
 ```
 
 Continue with configuration:
 
 ```
-
 # activate changes to .bashrc
 source ~/.bashrc
 # navigate to Kafka bin folder
 cd ../bin
 # create client.properties file
 nano client.properties
-
 ```
 
 Add the following code to the client.properties file, then save and exit:
 
 ```
-
 # Sets up TLS for encryption and SASL for authN.
 security.protocol = SASL_SSL
 
@@ -251,7 +238,6 @@ sasl.jaas.config = software.amazon.msk.auth.iam.IAMLoginModule required;
 # Encapsulates constructing a SigV4 signature based on extracted credentials.
 # The SASL client bound by "sasl.jaas.config" invokes this class.
 sasl.client.callback.handler.class = software.amazon.msk.auth.iam.IAMClientCallbackHandler
-
 ```
 
 ### Create topics on the Kafka cluster
@@ -260,7 +246,6 @@ You can now generate topics on the Kafka cluster through the command line on the
 
 ```
 <path-to-your-kafka-installation>/bin/kafka-topics.sh --create --bootstrap-server <BootstrapServerString> --command-config client.properties --topic <topic name>
-
 ```
 
 In this project, I established three topics: one for `pinterest_data`, another for `geolocation_data`, and the last one for `user_data` as described earlier.
@@ -272,28 +257,23 @@ With the cluster operational and the client configured to access and create topi
 To do this, first download the Confluent package to the client from the client's command line:
 
 ```
-
 # download package
 sudo wget https://packages.confluent.io/archive/7.2/confluent-7.2.0.tar.gz
 # unpack .tar
 tar -xvzf confluent-7.2.0.tar.gz
-
 ```
 
 Modifying the kafka-rest.properties file next:
 
 ```
-
 # navigate to the correct directory
 cd cd confluent-7.2.0/etc/kafka-rest/
 nano nano kafka-rest.properties
-
 ```
 
 Update the `bootstrap.servers` and `zookeeper.connect` variables with the values obtained from the MSK cluster information. Integrate the following lines to enable authentication:
 
 ```
-
 # Sets up TLS for encryption and SASL for authN.
 client.security.protocol = SASL_SSL
 
@@ -306,7 +286,6 @@ client.sasl.jaas.config = software.amazon.msk.auth.iam.IAMLoginModule required;
 # Encapsulates constructing a SigV4 signature based on extracted credentials.
 # The SASL client bound by "sasl.jaas.config" invokes this class.
 client.sasl.client.callback.handler.class = software.amazon.msk.auth.iam.IAMClientCallbackHandler
-
 ```
 
 The inbound rules for the client security group also need to be modified to allow incoming HTTP requests on port 8082. On the AWS 'Security groups' page, choose the security group attached to the client, and add the following inbound rule:
@@ -316,16 +295,226 @@ The inbound rules for the client security group also need to be modified to allo
 To initiate the REST API, go to the confluent-7.2.0/bin directory and execute the following command:
 
 ```
-
 ./kafka-rest-start /home/ec2-user/confluent-7.2.0/etc/kafka-rest/kafka-rest.properties
-
 ```
 
 Verify the API's request reception by opening a web browser and visiting "http://your-client-public-dns:8082/topics." The response should appear in the browser window and resemble something like:
 
 ```
-
 ["data.pin","data.geo","data.user"]
+```
+
+### AWS API Gateway
+
+Access the AWS API Gateway service; a REST API is employed in this project.
+
+1. Firstly, click 'Build' next to the REST API box:
+<img width="629" alt="image" src="https://github.com/jbell22j/pinterest-data-pipeline/assets/141024595/74c0b1ef-7e55-46b6-ada4-ae537b61e617">
+
+2. Choose 'REST', 'New API', give the API a descriptive name, then click on 'Create API'.
+3. From the 'Actions' menu, choose 'Create resource'. Select 'Configure as proxy resource' and 'Enable API Gateway CORS' boxes, then click on 'Create resource':
+<img width="1459" alt="rest-api-create-resource" src="https://github.com/jbell22j/pinterest-data-pipeline/assets/141024595/c6c57f8b-ab5b-48b5-91a1-139653c528a4">
+
+4. On the next page, set up HTTP Proxy, using the address for earlier as the endpoint, "http://your-client-public-dns:8082/{proxy}".
+5. With the resource and method created, it's possible to test the API (make sure that the REST proxy on the client is running and listening for requests). If everything is working correctly, the following test should result in a 200 response code and the same response body obtained through the browser.
+<img width="846" alt="rest-api-test-method" src="https://github.com/jbell22j/pinterest-data-pipeline/assets/141024595/e14fe6a8-3e39-4b22-a7f1-f1c4ae5eb01b">
+
+6. Now the API needs to be deployed. From the 'Actions' menu, select 'Deploy API'. Choose 'New stage' and give the stage a name, then click on 'Deploy':
+<img width="593" alt="rest-api-deploy" src="https://github.com/jbell22j/pinterest-data-pipeline/assets/141024595/50878d19-7b1f-4c80-8ed0-6f8a98435ebe">
+
+The process is now finished, and an invoke URL is generated for use in POST requests.
+
+### Sending messages to the cluster using the API gateway
+
+Executing the script `user_posting_emulation_batch_data.py` simulates a stream of messages, posting them to the cluster through the API gateway and Kafka REST proxy.
+To access the messages in each topic within the cluster, I employed Kafka Connect, specifically AWS MSK Connect. This connection links the cluster to an AWS S3 bucket, serving as a repository for deposited messages.
+
+### Connecting the Apache cluster to AWS S3 bucket
+
+To begin, establish an S3 bucket that will be linked to the cluster.
+
+1. On the AWS S3 dashboard, choose 'Create bucket.
+2. Assign a unique and descriptive name to the bucket, ensuring it is in the same AWS region as other project resources. Maintain default settings for other configurations.
+Now, proceed to create an IAM role for the MSK connector, utilizing the following policy. Note that this policy might not be sufficiently restrictive for production; its usage is confined to development purposes only.
 
 ```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "s3:*",
+                "kafka-cluster:DescribeCluster",
+                "kafka-cluster:Connect"
+            ],
+            "Resource": [
+                "arn:aws:s3:::<BUCKET-NAME>",
+                "arn:aws:s3:::<BUCKET-NAME>/*",
+                "arn:aws:kafka:<REGION>:<AWS-UUID>:cluster/<CLUSTER-NAME>/<CLUSTER-UUID>"
+            ]
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": [
+                "kafka-cluster:ReadData",
+                "kafka-cluster:DescribeTopic"
+            ],
+            "Resource": "arn:aws:kafka:<REGION>:<AWS-UUID>:topic/<CLUSTER-NAME>/<CLUSTER-UUID>/*"
+        },
+        {
+            "Sid": "VisualEditor2",
+            "Effect": "Allow",
+            "Action": [
+                "kafka-cluster:DescribeTopic",
+                "kafka-cluster:WriteData"
+            ],
+            "Resource": "arn:aws:kafka:<REGION>:<AWS-UUID>:topic/<CLUSTER-NAME>/<CLUSTER-UUID>/*"
+        },
+        {
+            "Sid": "VisualEditor3",
+            "Effect": "Allow",
+            "Action": [
+                "kafka-cluster:CreateTopic",
+                "kafka-cluster:ReadData",
+                "kafka-cluster:DescribeTopic",
+                "kafka-cluster:WriteData"
+            ],
+            "Resource": "arn:aws:kafka:<REGION>:<AWS-UUID>:topic/<CLUSTER-NAME>/<CLUSTER-UUID>/__amazon_msk_connect_*"
+        },
+        {
+            "Sid": "VisualEditor4",
+            "Effect": "Allow",
+            "Action": [
+                "kafka-cluster:AlterGroup",
+                "kafka-cluster:DescribeGroup"
+            ],
+            "Resource": [
+                "arn:aws:kafka:<REGION>:<AWS-UUID>:group/<CLUSTER-NAME>/<CLUSTER-UUID>/__amazon_msk_connect_*",
+                "arn:aws:kafka:<REGION>:<AWS-UUID>:group/<CLUSTER-NAME>/<CLUSTER-UUID>/connect-*"
+            ]
+        },
+        {
+            "Sid": "VisualEditor5",
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListStorageLensConfigurations",
+                "s3:ListAccessPointsForObjectLambda",
+                "s3:GetAccessPoint",
+                "s3:PutAccountPublicAccessBlock",
+                "s3:GetAccountPublicAccessBlock",
+                "s3:ListAllMyBuckets",
+                "s3:ListAccessPoints",
+                "s3:PutAccessPointPublicAccessBlock",
+                "s3:ListJobs",
+                "s3:PutStorageLensConfiguration",
+                "s3:ListMultiRegionAccessPoints",
+                "s3:CreateJob"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+```
+The role should have the following trust relationship:
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "kafkaconnect.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole"
+        }
+    ]
+}
+```
+
+The subsequent task involves establishing a VPC endpoint to S3.
+
+1. In the AWS VPC dashboard, opt for 'Endpoints' from the left-hand menu, and then click 'Create endpoint.'
+2. Provide a descriptive name for the endpoint.
+3. Select 'AWS services.'
+4. In the 'Services' search field, look for 'S3.'
+5. Choose:
+
+<img width="1819" alt="vpc-endpoint" src="https://github.com/jbell22j/pinterest-data-pipeline/assets/141024595/1a13b450-5d5c-4c49-a7a0-0dad9eb6c3ac">
+
+Select the default VPC corresponding to the region, mark the checkbox beside the default route tables, and proceed to click 'Create endpoint.'
+
+Now, let's proceed to create the connector. The initial step involves establishing a new plugin for the connector.
+
+1. To craft the plugin, you'll need a .zip file containing the plugin files. For the Kafka S3 Sink Connector, download it from "https://www.confluent.io/hub/confluentinc/kafka-connect-s3." After downloading, upload it to the S3 bucket, either via the console or a web browser.
+2. In the AWS MSK dashboard, choose 'Custom plugins' from the left-hand menu, and then click 'Create custom plugin.'
+3. In the subsequent window, navigate to the S3 bucket housing the .zip file, and select the .zip file:
+
+<img width="817" alt="custom-plugin" src="https://github.com/jbell22j/pinterest-data-pipeline/assets/141024595/a5b63663-516f-426c-8807-05177480da42">
+
+4. Select 'Create custom plugin.' The procedure will require a few minutes.
+5. Next, establish the connector by going to 'Connectors' in the MSK dashboard's left-hand menu.
+6. Choose 'Create connector.'
+7. Opt for 'Use existing plugin' and designate the recently created plugin. Proceed by clicking 'Next.'
+8. Assign a name to the connector, ensure 'MSK cluster' is highlighted, and then select the earlier created cluster.
+9. Apply the subsequent settings for configuration:
+```
+connector.class=io.confluent.connect.s3.S3SinkConnector
+# same region as our bucket and cluster
+s3.region=<REGION>
+flush.size=1
+schema.compatibility=NONE
+tasks.max=3
+# this depends on names given to topics
+topics.regex=<TOPIC-NAME>.*
+format.class=io.confluent.connect.s3.format.json.JsonFormat
+partitioner.class=io.confluent.connect.storage.partitioner.DefaultPartitioner
+value.converter.schemas.enable=false
+value.converter=org.apache.kafka.connect.json.JsonConverter
+storage.class=io.confluent.connect.s3.storage.S3Storage
+key.converter=org.apache.kafka.connect.storage.StringConverter
+s3.bucket.name=<BUCKET_NAME>
+```
+
+10. Opt for defaults in the remaining settings until 'Access Permissions,' where the IAM role designated for the connector must be selected.
+11. Click 'Next,' followed by 'Next' once more. Choose a location for log delivery; I opted to have logs delivered to the S3 bucket.
+12. Proceed by clicking 'Next' and then 'Create connector.'
+
+After the completion of the connector creation process, you should observe any messages sent to the cluster within the S3 bucket, organized in a folder titled 'Topics.'
+
+## Batch processing data using Apache Spark on Databricks
+
+To facilitate batch processing of data on Databricks, it's crucial to establish a mount for the S3 bucket on the platform. The notebook `mount_s3_and_get_data.ipynb`, executed on the Databricks platform, encompasses the following steps:
+
+1. Import necessary libraries
+2. List tables in Databricks filestore in order to obtain AWS credentials file name
+3. Read the credentials .csv into a Spark dataframe
+4. Generate credential variables from Spark dataframe
+5. Mount the S3 bucket containing the messages from the Kafka topics
+6. List the topics
+7. Read the .json message files into three Spark dataframes, one each for each of the topics
+8. Unmount the S3 bucket
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
