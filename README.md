@@ -5,6 +5,8 @@
 
 Pinterest crunches billions of data points every day to decide how to provide more value to their users. In this project we aimed to replicate the infrastructure utilized by Pinterest for the analysis of both historical and real-time data.
 
+Pinterest boasts top-tier machine learning engineering systems, handling billions of daily user interactions like image uploads and clicks. In this project, I'm constructing a cloud-based system that processes these events through two distinct pipelines. One computes real-time metrics, like profile popularity for immediate recommendations, while the other calculates metrics relying on historical data, such as determining this year's most popular category.
+
 <img width="651" alt="image" src="https://github.com/jbell22j/pinterest-data-pipeline/assets/141024595/210bf176-68d3-4128-bb2a-cb2ca111e84a">
 
 
