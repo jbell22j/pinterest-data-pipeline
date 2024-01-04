@@ -72,5 +72,16 @@ Our data pipeline begins with an Apache Kafka cluster within the AWS cloud ecosy
 
 <img width="324" alt="image" src="https://github.com/jbell22j/pinterest-data-pipeline/assets/141024595/af8d34fc-3a45-47c2-8a97-e55b44615c7b">
 
-6. Lastly, scroll down and hit 'Create cluster.' The creation process may take 15 to 20 minutes. Once done, go to the 'Properties' tab, find the network settings, and note the associated security group. Click 'View client information' and jot down the bootstrap servers.
+5. Lastly, scroll down and hit 'Create cluster.' The creation process may take 15 to 20 minutes. Once done, go to the 'Properties' tab, find the network settings, and note the associated security group. Click 'View client information' and jot down the bootstrap servers.
 
+### Create an client machine for the cluster
+
+A client is needed to communicate with our configured cluster. In this project, an EC2 instance is employed to serve as the client.
+
+1. Go to the EC2 dashboard and select 'Launch Instance.'
+<img width="329" alt="image" src="https://github.com/jbell22j/pinterest-data-pipeline/assets/141024595/fa5e83da-09e9-4425-942e-5e3d6a6addfc">
+2. Provide a name for the instance, such as 'pinterest-kafka-client.'
+3. Maintain the default Application and OS images, as well as the instance type, considering usage and cost considerations.
+4. Generate a new keypair for secure SSH connection to the instance. Choose a descriptive name, select 'RSA,' and opt for '.pem' as the file format. The .pem file will download automatically; ensure its safekeeping for future use.
+
+<img width="470" alt="image" src="https://github.com/jbell22j/pinterest-data-pipeline/assets/141024595/5483ae4b-a439-401f-bf7d-955a67e74404">
