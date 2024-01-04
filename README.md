@@ -14,7 +14,8 @@ Pinterest crunches billions of data points every day to decide how to provide mo
 
 Pinterest boasts top-tier machine learning engineering systems, handling billions of daily user interactions like image uploads and clicks. In this project, I'm constructing a cloud-based system that processes these events through two distinct pipelines. One computes real-time metrics, like profile popularity for immediate recommendations, while the other calculates metrics relying on historical data, such as determining this year's most popular category.
 
-<img width="651" alt="image" src="https://github.com/jbell22j/pinterest-data-pipeline/assets/141024595/210bf176-68d3-4128-bb2a-cb2ca111e84a">
+<img width="855" alt="image" src="https://github.com/jbell22j/pinterest-data-pipeline/assets/141024595/759369bf-703c-4aff-b45d-a8585db1a4c7">
+
 
  <a id="dep"></a>
 ## Project Dependencies
