@@ -55,3 +55,19 @@ The `run_infinite_post_data_loop()` method continuously cycles at random interva
 * [Kafka REST Proxy](https://docs.confluent.io/platform/current/kafka-rest/index.html) - From the [documentation](https://docs.confluent.io/platform/current/kafka-rest/index.html):
 > The Confluent REST Proxy provides a RESTful interface to an Apache Kafka® cluster, making it easy to produce and consume messages, view the state of the cluster, and perform administrative actions without using the native Kafka protocol or clients.
 * [Managed Workflows for Apache Airflow](https://docs.aws.amazon.com/mwaa/latest/userguide/what-is-mwaa.html) - With Apache Airflow, users can employ Python to construct scheduling workflows for batch-oriented processes. In this project, MWAA is leveraged to orchestrate batch processing on the Databricks platform.
+
+## Building the Pipeline
+
+### Create an Apache cluster using AWS MSK
+
+Our data pipeline begins with an Apache Kafka cluster within the AWS cloud ecosystem, utilizing Amazon Managed Streaming for Apache Kafka (MSK). The documentation provides a comprehensive guide for initiating the process, and I'll outline the steps taken to establish a functioning cluster here.
+
+1. To begin, access the AWS console and locate MSK in the 'Services' menu.
+2. Within the MSK menu, initiate the cluster creation process by selecting 'Create cluster.'
+3. Opt for either the 'quick' or 'custom' create options, and assign a name to the cluster.
+
+<img width="312" alt="image" src="https://github.com/jbell22j/pinterest-data-pipeline/assets/141024595/c8721312-a5b9-4dd0-9f28-9718c6ad98bc">
+
+4. Scroll down and select 'Provisioned,' specifying the Kafka version and broker type based on requirements and cost considerations.
+5. Lastly, scroll down and hit 'Create cluster.' The creation process may take 15 to 20 minutes. Once done, go to the 'Properties' tab, find the network settings, and note the associated security group. Click 'View client information' and jot down the bootstrap servers.
+
