@@ -66,7 +66,8 @@ Our data pipeline begins with an Apache Kafka cluster within the AWS cloud ecosy
 2. Within the MSK menu, initiate the cluster creation process by selecting 'Create cluster.'
 3. Opt for either the 'quick' or 'custom' create options, and assign a name to the cluster.
 
-<img width="312" alt="image" src="https://github.com/jbell22j/pinterest-data-pipeline/assets/141024595/c8721312-a5b9-4dd0-9f28-9718c6ad98bc">
+<img width="312" alt="image" src="https://github.com/jbell22j/pinterest-data-pipeline/assets/141024595/c8721312-a5b9-4dd0-9f28-9718c6ad98bc"> <img width="324" alt="image" src="https://github.com/jbell22j/pinterest-data-pipeline/assets/141024595/af8d34fc-3a45-47c2-8a97-e55b44615c7b">
+
 
 4. Scroll down and select 'Provisioned,' specifying the Kafka version and broker type based on requirements and cost considerations.
 5. Lastly, scroll down and hit 'Create cluster.' The creation process may take 15 to 20 minutes. Once done, go to the 'Properties' tab, find the network settings, and note the associated security group. Click 'View client information' and jot down the bootstrap servers.
