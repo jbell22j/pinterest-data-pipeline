@@ -5,13 +5,20 @@
 
 ### Aims
 
-Pinterest crunches billions of data points every day to decide how to provide more value to their users. In this project we aimed to create a similar system using the AWS Cloud. 
+Pinterest crunches billions of data points every day to decide how to provide more value to their users. In this project we aimed to replicate the infrastructure utilized by Pinterest for the analysis of both historical and real-time data.
 
 ### Outcomes
 
 This project has taught me how to use AWS cloud in detail, extracting data from databases stored on AWS, sending relevant data via. batch and streaming methods (AWS kinesis, s3-bucket, API Gateway, MWAA). Extending this cloud system through Databricks cleaning the data and querying it using SQL commands via PySpark.
 
 ## Usage Instructions
+
+### Project Dependencies
+
+To execute this project, make sure to have the following modules installed:
+
+* requests
+* sqlalchemy
 
 ### Batch Data
 
