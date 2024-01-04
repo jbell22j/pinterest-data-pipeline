@@ -84,4 +84,5 @@ A client is needed to communicate with our configured cluster. In this project, 
 3. Maintain the default Application and OS images, as well as the instance type, considering usage and cost considerations.
 4. Generate a new keypair for secure SSH connection to the instance. Choose a descriptive name, select 'RSA,' and opt for '.pem' as the file format. The .pem file will download automatically; ensure its safekeeping for future use.
 
+
 <img width="470" alt="image" src="https://github.com/jbell22j/pinterest-data-pipeline/assets/141024595/5483ae4b-a439-401f-bf7d-955a67e74404">
