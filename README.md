@@ -1,5 +1,12 @@
 # pinterest-data-pipeline
 
+#### Table of Contents
+
+- [Project Brief](#Project Brief)
+- [Project Dependencies](#Project Dependencies)
+- [Center](#center)
+- [Color](#color)
+
 
 ## Project Brief
 
