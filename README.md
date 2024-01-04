@@ -74,7 +74,7 @@ Our data pipeline begins with an Apache Kafka cluster within the AWS cloud ecosy
 
 5. Lastly, scroll down and hit 'Create cluster.' The creation process may take 15 to 20 minutes. Once done, go to the 'Properties' tab, find the network settings, and note the associated security group. Click 'View client information' and jot down the bootstrap servers.
 
-### Create an client machine for the cluster
+### Create a client machine for the cluster
 
 A client is needed to communicate with our configured cluster. In this project, an EC2 instance is employed to serve as the client.
 
@@ -87,3 +87,68 @@ A client is needed to communicate with our configured cluster. In this project, 
 4. Generate a new keypair for secure SSH connection to the instance. Choose a descriptive name, select 'RSA,' and opt for '.pem' as the file format. The .pem file will download automatically; ensure its safekeeping for future use.
 
 <img width="400" alt="image" src="https://github.com/jbell22j/pinterest-data-pipeline/assets/141024595/5483ae4b-a439-401f-bf7d-955a67e74404">
+
+5.Keep the default settings for the other sections. Click on 'Launch Instance'.
+
+### Enable client machine to connect to the cluster
+
+In order for the client machine to connect to the cluster, we need to edit the inbound rules for the security group associated with the cluster.
+
+1. Within the EC2 menu on the left, access 'Security Groups.'
+
+<img width="166" alt="image" src="https://github.com/jbell22j/pinterest-data-pipeline/assets/141024595/e283c7d3-963e-469c-89fb-143f16c35642">
+
+2. Pick the security group linked to the Kafka cluster (as identified earlier).
+3. Navigate to the 'Inbound rules' tab, then click 'Edit inbound rules.'
+4. Add a rule by selecting 'All traffic' for the type, and choose the security group linked to the EC2 instance.#
+5. Save the rules.
+
+1. Go to the AWS IAM dashboard, choose 'Roles' from the left menu, and click 'Create role.'
+2. Select 'AWS service' and 'EC2,' then proceed to the next step.
+3. Choose 'Create policy' on the subsequent page.
+4. In the policy editor, opt for JSON format and paste the provided policy. <strong> Note: This policy is somewhat open; a more restrictive policy is advisable for a production environment. </strong>
+
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "kafka:ListClustersV2",
+                "kafka:ListVpcConnections",
+                "kafka:DescribeClusterOperation",
+                "kafka:GetCompatibleKafkaVersions",
+                "kafka:ListClusters",
+                "kafka:ListKafkaVersions",
+                "kafka:GetBootstrapBrokers",
+                "kafka:ListConfigurations",
+                "kafka:DescribeClusterOperationV2"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": "kafka-cluster:*",
+            "Resource": [
+                "arn:aws:kafka:*:<AWS-UUID>:transactional-id/*/*/*",
+                "arn:aws:kafka:*:<AWS-UUID>:group/*/*/*",
+                "arn:aws:kafka:*:<AWS-UUID>:topic/*/*/*",
+                "arn:aws:kafka:*:<AWS-UUID>:cluster/*/*"
+            ]
+        },
+        {
+            "Sid": "VisualEditor2",
+            "Effect": "Allow",
+            "Action": "kafka:*",
+            "Resource": [
+                "arn:aws:kafka:*:<AWS-UUID>:cluster/*/*",
+                "arn:aws:kafka:*:<AWS-UUID>:configuration/*/*",
+                "arn:aws:kafka:*:<AWS-UUID>:vpc-connection/*/*/*"
+            ]
+        }
+    ]
+}
+```
