@@ -8,7 +8,7 @@
 - [Tools Utilized](#tools)
 
  <a id="brief"></a>
-### Project Brief 
+## Project Brief 
 
 Pinterest crunches billions of data points every day to decide how to provide more value to their users. In this project we aimed to replicate the infrastructure utilized by Pinterest for the analysis of both historical and real-time data.
 
@@ -17,7 +17,7 @@ Pinterest boasts top-tier machine learning engineering systems, handling billion
 <img width="651" alt="image" src="https://github.com/jbell22j/pinterest-data-pipeline/assets/141024595/210bf176-68d3-4128-bb2a-cb2ca111e84a">
 
  <a id="dep"></a>
-### Project Dependencies
+## Project Dependencies
 
 To execute this project, make sure to have the following modules installed:
 
@@ -25,7 +25,7 @@ To execute this project, make sure to have the following modules installed:
 * sqlalchemy
 
  <a id="data"></a>
-### Project Data 
+## Project Data 
 
 To simulate the data typically handled by Pinterest's engineers, the project includes a script called user_posting_emulation_to_console.py. When executed from the terminal, this script replicates the flow of random data points sent to the Pinterest API through POST requests as users upload data to the platform.
 
@@ -38,7 +38,7 @@ When the script is run, it initializes a database connector class responsible fo
 The `run_infinite_post_data_loop()` method continuously cycles at random intervals ranging from 0 to 2 seconds. During each iteration, it randomly selects all columns from a row in each of the three tables, compiling the data into a dictionary. Subsequently, these three dictionaries are printed to the console.
 
  <a id="tools"></a>
-### Tools Utilized 
+## Tools Utilized 
 
 * [Apache Kafka](https://kafka.apache.org/) - Apache Kafka is an open-source distributed event streaming platform. From the Kafka [documentation](https://kafka.apache.org/documentation/):
 > Event streaming is the practice of capturing data in real-time from event sources like databases, sensors, mobile devices, cloud services, and software applications in the form of streams of events; storing these event streams durably for later retrieval; manipulating, processing, and reacting to the event streams in real-time as well as retrospectively; and routing the event streams to different destination technologies as needed. Kafka combines three key capabilities so you can implement your use cases for event streaming end-to-end with a single battle-tested solution. Kafka is a distributed system consisting of servers and clients that communicate via a high-performance TCP network protocol.
