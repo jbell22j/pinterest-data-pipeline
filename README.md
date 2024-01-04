@@ -7,8 +7,8 @@
 - [Project Data](#data)
 - [Tools Utilized](#tools)
 
-
-### Project Brief {#brief}
+ <a id="brief"></a>
+### Project Brief 
 
 Pinterest crunches billions of data points every day to decide how to provide more value to their users. In this project we aimed to replicate the infrastructure utilized by Pinterest for the analysis of both historical and real-time data.
 
