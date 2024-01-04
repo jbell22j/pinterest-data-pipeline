@@ -7,6 +7,8 @@
 - [Project Data](#data)
 - [Tools Utilized](#tools)
 - [Building the Pipeline](#build)
+- [Batch processing data using Apache Spark on Databricks](#batch)
+- [Processing streaming data](#stream)
 
  <a id="brief"></a>
 ## Project Brief 
@@ -484,6 +486,7 @@ s3.bucket.name=<BUCKET_NAME>
 
 After the completion of the connector creation process, you should observe any messages sent to the cluster within the S3 bucket, organized in a folder titled 'Topics.'
 
+ <a id="batch"></a>
 ## Batch processing data using Apache Spark on Databricks
 
 To facilitate batch processing of data on Databricks, it's crucial to establish a mount for the S3 bucket on the platform. The notebook `mount_s3_bucket.ipynb`, executed on the Databricks platform, encompasses the following steps:
@@ -505,6 +508,7 @@ The file databricks_data_cleaning_and_sql_notebook.ipynb contains the code for p
 
 MWAA was employed to automate the execution of batch processing on Databricks. The Python code file `0a65154c50dd_dag.py` constitutes a Directed Acyclic Graph (DAG) orchestrating the execution of the aforementioned batch processing notebook. Uploaded to the MWAA environment, Airflow within MWAA is utilized to establish connections and execute the Databricks notebook at scheduled intervals, specified here as `@daily`.
 
+ <a id="stream"></a>
 ## Processing streaming data
 
 ### Create data streams on Kinesis
