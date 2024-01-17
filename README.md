@@ -6,6 +6,7 @@
 - [Project Dependencies](#dep)
 - [Project Data](#data)
 - [Tools Utilized](#tools)
+- [Pipeline Architecture](#arc)
 - [Building the Pipeline](#build)
 - [Batch processing data using Apache Spark on Databricks](#batch)
 - [Processing streaming data](#stream)
@@ -58,6 +59,12 @@ The `run_infinite_post_data_loop()` method continuously cycles at random interva
 * [Kafka REST Proxy](https://docs.confluent.io/platform/current/kafka-rest/index.html) - From the [documentation](https://docs.confluent.io/platform/current/kafka-rest/index.html):
 > The Confluent REST Proxy provides a RESTful interface to an Apache Kafka® cluster, making it easy to produce and consume messages, view the state of the cluster, and perform administrative actions without using the native Kafka protocol or clients.
 * [Managed Workflows for Apache Airflow](https://docs.aws.amazon.com/mwaa/latest/userguide/what-is-mwaa.html) - With Apache Airflow, users can employ Python to construct scheduling workflows for batch-oriented processes. In this project, MWAA is leveraged to orchestrate batch processing on the Databricks platform.
+
+<a id="arc"></a>
+## Pipeline Architecture
+
+![CloudPinterestPipeline](https://github.com/jbell22j/pinterest-data-pipeline/assets/141024595/5e4d7a74-4d94-465c-bcb7-92b419440ba1)
+
 
  <a id="build"></a>
 ## Building the Pipeline
