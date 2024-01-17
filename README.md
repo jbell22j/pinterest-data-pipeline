@@ -17,7 +17,7 @@
   - [AWS API Gateway](#api)
   - [Sending messages to the cluster using the API gateway](#send)
   - [Connecting the Apache cluster to AWS S3 bucket](#s3)
-- [Batch processing data using Apache Spark on Databricks](#batch)
+ - [Batch processing data using Apache Spark on Databricks](#batch)
   - [Clean and query data using Apache Spark on Databricks](#clean)
   - [Orchestrating automated workflow of notebook on Databricks](#orch)
   - [Data Tables](#table)
