@@ -8,6 +8,7 @@
 - [Tools Utilized](#tools)
 - [Pipeline Architecture](#arc)
 - [Building the Pipeline](#build)
+- [Create an Apache cluster using AWS MSK](#clust)
 - [Batch processing data using Apache Spark on Databricks](#batch)
 - [Processing streaming data](#stream)
 
@@ -69,6 +70,7 @@ The `run_infinite_post_data_loop()` method continuously cycles at random interva
  <a id="build"></a>
 ## Building the Pipeline
 
+ <a id="clust"></a>
 ### Create an Apache cluster using AWS MSK
 
 Our data pipeline begins with an Apache Kafka cluster within the AWS cloud ecosystem, utilizing Amazon Managed Streaming for Apache Kafka (MSK). The documentation provides a comprehensive guide for initiating the process, and I'll outline the steps taken to establish a functioning cluster here.
