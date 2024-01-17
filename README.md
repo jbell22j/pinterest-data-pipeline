@@ -8,7 +8,7 @@
 - [Tools Utilized](#tools)
 - [Pipeline Architecture](#arc)
 - [Building the Pipeline](#build)
-- [Create an Apache cluster using AWS MSK](#clust)
+ - [Create an Apache cluster using AWS MSK](#clust)
 - [Batch processing data using Apache Spark on Databricks](#batch)
 - [Processing streaming data](#stream)
 
