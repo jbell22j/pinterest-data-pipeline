@@ -38,7 +38,7 @@ When the script is run, it initializes a database connector class responsible fo
 
 * `pinterest_data` contains data related to content being uploaded to Pinterest
 * `geolocation_data` contains data related to the geolocation of each Pinterest post in `pinterest_data`
-* `user_data contains` data related to the user whom each post in `pinterest_data` has been posted by
+* `user_data` contains data related to the user whom each post in `pinterest_data` has been posted by
 
 The `run_infinite_post_data_loop()` method continuously cycles at random intervals ranging from 0 to 2 seconds. During each iteration, it randomly selects all columns from a row in each of the three tables, compiling the data into a dictionary. Subsequently, these three dictionaries are printed to the console.
 
@@ -493,6 +493,7 @@ s3.bucket.name=<BUCKET_NAME>
 
 After the completion of the connector creation process, you should observe any messages sent to the cluster within the S3 bucket, organized in a folder titled 'Topics.'
 
+
  <a id="batch"></a>
 ## Batch processing data using Apache Spark on Databricks
 
@@ -514,6 +515,11 @@ The file databricks_data_cleaning_and_sql_notebook.ipynb contains the code for p
 ### Orchestrating automated workflow of notebook on Databricks
 
 MWAA was employed to automate the execution of batch processing on Databricks. The Python code file `0a65154c50dd_dag.py` constitutes a Directed Acyclic Graph (DAG) orchestrating the execution of the aforementioned batch processing notebook. Uploaded to the MWAA environment, Airflow within MWAA is utilized to establish connections and execute the Databricks notebook at scheduled intervals, specified here as `@daily`.
+
+### Data Tables
+
+The geolocation data as an example looks like this after cleaning:
+<img width="387" alt="image" src="https://github.com/jbell22j/pinterest-data-pipeline/assets/141024595/0bfec375-94c2-4668-9f4f-c1f3f083d1fe">
 
  <a id="stream"></a>
 ## Processing streaming data
