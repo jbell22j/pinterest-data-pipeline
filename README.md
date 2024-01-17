@@ -9,8 +9,23 @@
 - [Pipeline Architecture](#arc)
 - [Building the Pipeline](#build)
   - [Create an Apache cluster using AWS MSK](#clust)
+  - [Create a client machine for the cluster](#machine)
+  - [Enable client machine to connect to the cluster](#connect)
+  - [Install Kafka on the client machine](#kafka)
+  - [Create topics on the Kafka cluster](#topic)
+  - [Delivering messages to the Kafka cluster](#deliver)
+  - [AWS API Gateway](#api)
+  - [Sending messages to the cluster using the API gateway](#send)
+  - [Connecting the Apache cluster to AWS S3 bucket](#s3)
 - [Batch processing data using Apache Spark on Databricks](#batch)
+  - [Clean and query data using Apache Spark on Databricks](#clean)
+  - [Orchestrating automated workflow of notebook on Databricks](#orch)
+  - [Data Tables](#table)
 - [Processing streaming data](#stream)
+  - [Create data streams on Kinesis](#kinesis)
+  - [Create API proxy for uploading data to streams](#proxy)
+  - [Sending data to the Kinesis streams](#send)
+  - [Processing the streaming data in Databricks](#process)
 
  <a id="brief"></a>
 ## Project Brief 
@@ -87,6 +102,7 @@ Our data pipeline begins with an Apache Kafka cluster within the AWS cloud ecosy
 
 5. Lastly, scroll down and hit 'Create cluster.' The creation process may take 15 to 20 minutes. Once done, go to the 'Properties' tab, find the network settings, and note the associated security group. Click 'View client information' and jot down the bootstrap servers.
 
+ <a id="machine"></a>
 ### Create a client machine for the cluster
 
 A client is needed to communicate with our configured cluster. In this project, an EC2 instance is employed to serve as the client.
@@ -103,6 +119,7 @@ A client is needed to communicate with our configured cluster. In this project, 
 
 5.Keep the default settings for the other sections. Click on 'Launch Instance'.
 
+ <a id="connect"></a>
 ### Enable client machine to connect to the cluster
 
 In order for the client machine to connect to the cluster, we need to edit the inbound rules for the security group associated with the cluster.
@@ -175,6 +192,7 @@ We also need to create an IAM role for the client machine.
 9. Under 'Actions' and 'Security,' choose 'Modify IAM role.'
 10. Pick the recently created role and click 'Update IAM role.'
 
+ <a id="kafka"></a>
 ### Install Kafka on the client machine
 
 After the new instance is in the running state, establish an SSH connection to interact with the instance via the command line. To achieve this, click on the instance ID to open the summary page, then select 'Connect':
@@ -251,6 +269,8 @@ sasl.jaas.config = software.amazon.msk.auth.iam.IAMLoginModule required;
 sasl.client.callback.handler.class = software.amazon.msk.auth.iam.IAMClientCallbackHandler
 ```
 
+
+ <a id="topic"></a>
 ### Create topics on the Kafka cluster
 
 You can now generate topics on the Kafka cluster through the command line on the client machine. Employ the following command to create topics, utilizing the bootstrap server string documented earlier after the cluster creation.
@@ -261,6 +281,7 @@ You can now generate topics on the Kafka cluster through the command line on the
 
 In this project, I established three topics: one for `pinterest_data`, another for `geolocation_data`, and the last one for `user_data` as described earlier.
 
+ <a id="deliver"></a>
 ### Delivering messages to the Kafka cluster
 
 With the cluster operational and the client configured to access and create topics, you can now employ the client to establish producers for streaming messages to the cluster and consumers for retrieving those messages. I utilized the Confluent package to establish a REST API on the client. This API listens for requests and interacts with the Kafka cluster accordingly.
@@ -315,6 +336,7 @@ Verify the API's request reception by opening a web browser and visiting "http:/
 ["data.pin","data.geo","data.user"]
 ```
 
+ <a id="api"></a>
 ### AWS API Gateway
 
 Access the AWS API Gateway service; a REST API is employed in this project.
@@ -335,11 +357,13 @@ Access the AWS API Gateway service; a REST API is employed in this project.
 
 The process is now finished, and an invoke URL is generated for use in POST requests.
 
+ <a id="send"></a>
 ### Sending messages to the cluster using the API gateway
 
 Executing the script `user_posting_emulation_batch_data.py` simulates a stream of messages, posting them to the cluster through the API gateway and Kafka REST proxy.
 To access the messages in each topic within the cluster, I employed Kafka Connect, specifically AWS MSK Connect. This connection links the cluster to an AWS S3 bucket, serving as a repository for deposited messages.
 
+ <a id="s3"></a>
 ### Connecting the Apache cluster to AWS S3 bucket
 
 To begin, establish an S3 bucket that will be linked to the cluster.
@@ -510,14 +534,17 @@ To facilitate batch processing of data on Databricks, it's crucial to establish 
 7. Read the .json message files into three Spark dataframes, one each for each of the topics
 8. Unmount the S3 bucket
 
+ <a id="clean"></a>
 ### Clean and query data using Apache Spark on Databricks
 
 The file databricks_data_cleaning_and_sql_notebook.ipynb contains the code for performing the necessary cleaning of the dataframes created using the steps above and the querying and returning specific insights about the data of the subsequent clean dataframes.
 
+ <a id="orch"></a>
 ### Orchestrating automated workflow of notebook on Databricks
 
 MWAA was employed to automate the execution of batch processing on Databricks. The Python code file `0a65154c50dd_dag.py` constitutes a Directed Acyclic Graph (DAG) orchestrating the execution of the aforementioned batch processing notebook. Uploaded to the MWAA environment, Airflow within MWAA is utilized to establish connections and execute the Databricks notebook at scheduled intervals, specified here as `@daily`.
 
+ <a id="table"></a>
 ### Data Tables
 
 The geolocation data as an example looks like this after cleaning:
@@ -526,6 +553,7 @@ The geolocation data as an example looks like this after cleaning:
  <a id="stream"></a>
 ## Processing streaming data
 
+ <a id="kinesis"></a>
 ### Create data streams on Kinesis
 
 Initiating the processing of streaming data involved the creation of three streams on AWS Kinesis, each dedicated to a distinct data source.
@@ -534,6 +562,7 @@ Initiating the processing of streaming data involved the creation of three strea
 2. Give the stream a name, and select 'Provisioned' capacity mode.
 3. Click on 'Create data stream' to complete the process.
 
+ <a id="proxy"></a>
 ### Create API proxy for uploading data to streams
 
 Interacting with the recently added Kinesis streams through HTTP requests is achievable. To enable this, I established new API resources on AWS API Gateway.
@@ -613,10 +642,12 @@ For the other methods, the same settings were used except for:
 ```
 After creating the new resources and methods, the API must be redeployed.
 
+ <a id="send"></a>
 ### Sending data to the Kinesis streams
 
 Executing the script `user_posting_emulation_streaming.py` initiates an infinite loop. Similar to the examples mentioned earlier, it fetches records from the RDS database and transmits them through the new API to Kinesis.
 
+ <a id="process"></a>
 ### Processing the streaming data in Databricks
 
 The Jupyter notebook `data_streaming_and_cleaning_from_kinesis.ipynb` encompasses all the essential code for fetching the streams from Kinesis, refining (cleaning) the data, and subsequently loading the data into Delta tables on the Databricks cluster.
